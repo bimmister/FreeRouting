@@ -476,7 +476,7 @@ public class BoardPanel extends javax.swing.JPanel
     
     public final BoardFrame board_frame;
     
-    BoardHandling board_handling = null;
+    public BoardHandling board_handling = null;
     
     private final JScrollPane scroll_pane;
     Point2D right_button_click_location = null;

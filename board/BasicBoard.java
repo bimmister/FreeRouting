@@ -1272,7 +1272,8 @@ public class BasicBoard implements java.io.Serializable
         p_item.board = this;
         item_list.insert(p_item);
         search_tree_manager.insert(p_item);
-        communication.observers.notify_new(p_item);
+        if (communication.observers != null)
+        	communication.observers.notify_new(p_item);
         additional_update_after_change(p_item);
     }
 

@@ -169,7 +169,7 @@ public class BoardFrame extends javax.swing.JFrame
      * If p_is_import, the design is read from a scpecctra dsn file.
      * Returns false, if the file is invalid.
      */
-    boolean read(java.io.InputStream p_input_stream, boolean p_is_import, javax.swing.JTextField p_message_field)
+    public boolean read(java.io.InputStream p_input_stream, boolean p_is_import, javax.swing.JTextField p_message_field)
     {
         java.awt.Point viewport_position = null;
         if (p_is_import)
@@ -669,7 +669,7 @@ public class BoardFrame extends javax.swing.JFrame
     final BoardMenuBar menubar;
     
     /** The panel with the graphical representation of the board. */
-    final BoardPanel board_panel;
+    public final BoardPanel board_panel;
     
     /** The panel with the toolbars */
     private final BoardToolbar toolbar_panel;

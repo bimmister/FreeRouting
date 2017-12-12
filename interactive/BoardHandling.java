@@ -73,6 +73,19 @@ public class BoardHandling
         this.set_interactive_state(SelectMenuState.get_instance(this, logfile));
         this.resources = java.util.ResourceBundle.getBundle("interactive.resources.BoardHandling", p_locale);
     }
+    
+    /**
+     * Create a new BoardHandling without tying to a panel
+     */
+    public BoardHandling(java.util.Locale p_locale)
+    {
+    	this.locale = p_locale;
+    	this.panel = null;
+    	this.screen_messages = null;
+    	this.logfile = new Logfile();
+    	this.set_interactive_state(SelectMenuState.get_instance(this, logfile));
+    	this.resources = java.util.ResourceBundle.getBundle("interactive.resources.BoardHandling", p_locale);
+    }
 
     /**
      * Sets the board to read only for example when running a seperate action thread
@@ -344,12 +357,13 @@ public class BoardHandling
     void set_layer(int p_layer_no)
     {
         board.Layer curr_layer = board.layer_structure.arr[p_layer_no];
-        screen_messages.set_layer(curr_layer.name);
+        if (screen_messages != null)
+        	screen_messages.set_layer(curr_layer.name);
         settings.layer = p_layer_no;
 
         // Change the selected layer in the select parameter window.
         int signal_layer_no = board.layer_structure.get_signal_layer_no(curr_layer);
-        if (!this.board_is_read_only)
+        if (!this.board_is_read_only && this.panel != null)
         {
             this.panel.set_selected_signal_layer(signal_layer_no);
         }
@@ -616,7 +630,9 @@ public class BoardHandling
         this.settings = new Settings(this.board, this.logfile);
 
         // create a graphics context for the board
-        Dimension panel_size = panel.getPreferredSize();
+        Dimension panel_size = new Dimension(1200, 900);
+        if (panel != null)
+        	 panel_size = panel.getPreferredSize();
         graphics_context = new GraphicsContext(p_bounding_box, panel_size, p_layer_structure, this.locale);
     }
 
@@ -664,7 +680,7 @@ public class BoardHandling
             final Rectangle MAX_RECTAMGLE = new Rectangle(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
             panel.paintImmediately(MAX_RECTAMGLE);
         }
-        else
+        else if (panel != null)
         {
             panel.repaint();
         }
@@ -1736,8 +1752,15 @@ public class BoardHandling
             this.interactive_state = p_state;
             if (!this.board_is_read_only)
             {
-                p_state.set_toolbar();
-                this.panel.board_frame.set_context_sensitive_help(this.panel, p_state.get_help_id());
+            	try
+            	{
+	                p_state.set_toolbar();
+	                this.panel.board_frame.set_context_sensitive_help(this.panel, p_state.get_help_id());
+            	}
+            	catch (NullPointerException ex)
+            	{
+            		
+            	}
             }
         }
     }
