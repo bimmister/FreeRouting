@@ -27,7 +27,7 @@ import javax.swing.JLabel;
  *
  * @author  arbeit
  */
-public class ScreenMessages
+public class ScreenMessages implements IScreenMessages
 {
     
     /** Creates a new instance of ScreenMessageFields */

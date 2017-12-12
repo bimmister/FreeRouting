@@ -386,7 +386,8 @@ public class BasicBoard implements java.io.Serializable
         item_list.delete(p_item);
 
         // let the observers syncronize the deletion
-        communication.observers.notify_deleted(p_item);
+        if (communication.observers != null)
+        	communication.observers.notify_deleted(p_item);
     }
 
     /**

@@ -1,7 +1,13 @@
 package cli;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
+import board.BoardObserverAdaptor;
 import board.TestLevel;
 import designformats.specctra.DsnFile;
 import gui.BoardFrame;
@@ -13,6 +19,7 @@ public class MainApplication {
 	public static void main(String p_args[])
     {
 		String design_file_name = "";
+		String output_file_name = "";
 		
 		for (int i = 0; i < p_args.length; ++i)
         {
@@ -23,11 +30,22 @@ public class MainApplication {
                     design_file_name = p_args[i + 1];
                 }
             }
+            else if (p_args[i].startsWith("-o"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		output_file_name = p_args[i+1];
+            	}
+            }
         }
 		
 		if (design_file_name.isEmpty())
 		{
-			ErrorOut("No filename was specified! Exiting...", 1);
+			ErrorOut("No input filename was specified! Exiting...", 1);
+		}
+		if (output_file_name.isEmpty())
+		{
+			ErrorOut("No output filename was specified! Exiting...", 1);
 		}
 
 		BoardFrame.Option board_option = BoardFrame.Option.SINGLE_FRAME;
@@ -42,7 +60,45 @@ public class MainApplication {
         }
 		
 		BoardHandling bh = new BoardHandling(current_locale);
-		DsnFile.ReadResult result = bh.import_design(input_stream, null, new board.ItemIdNoGenerator(), TestLevel.RELEASE_VERSION);
+		DsnFile.ReadResult read_result = bh.import_design(input_stream, new BoardObserverAdaptor(), new board.ItemIdNoGenerator(), TestLevel.RELEASE_VERSION);
+		try {
+			input_stream.close();
+		} catch (IOException e1) {
+			ErrorOut("Error while closing input stream!", 1);
+		}
+		
+		if (read_result == DsnFile.ReadResult.ERROR)
+			ErrorOut("Unspecified error while reading design file!", 1);
+		else if (read_result == DsnFile.ReadResult.OUTLINE_MISSING)
+			ErrorOut("Outline missing in design file!", 2);
+		
+		bh.start_batch_autorouter();
+		
+		try {
+			do
+			{
+				TimeUnit.MILLISECONDS.sleep(100);
+				System.out.print("x");
+			}
+			while(!bh.has_autorouted);
+		} catch (InterruptedException e) {
+			ErrorOut("Interrupted..!", 0);
+		}
+		
+		try
+		{
+			File output_file = new File(output_file_name);
+			java.io.OutputStream output_stream = new FileOutputStream(output_file);
+			if (!output_file.exists())
+				output_file.createNewFile();
+			bh.export_to_dsn_file(output_stream, "test", false);
+			output_stream.close();
+		}
+		catch (Exception e)
+		{
+			ErrorOut("Error while writing to output!", 1);
+		}
+		
 		System.out.println("DONE");
     }
 

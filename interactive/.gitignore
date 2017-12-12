@@ -102,3 +102,5 @@
 /StitchRouteState.class
 /TileConstructionState.class
 /ZoomRegionState.class
+/IScreenMessages.class
+/CLIScreenMessages.class

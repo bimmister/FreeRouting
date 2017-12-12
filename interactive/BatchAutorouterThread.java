@@ -125,6 +125,10 @@ public class BatchAutorouterThread extends InteractiveActionThread
         {
 
         }
+        finally
+        {
+        	hdlg.has_autorouted = true;
+        }
     }
 
     public void draw(java.awt.Graphics p_graphics)

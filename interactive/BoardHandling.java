@@ -81,7 +81,7 @@ public class BoardHandling
     {
     	this.locale = p_locale;
     	this.panel = null;
-    	this.screen_messages = null;
+    	this.screen_messages = new CLIScreenMessages(p_locale);
     	this.logfile = new Logfile();
     	this.set_interactive_state(SelectMenuState.get_instance(this, logfile));
     	this.resources = java.util.ResourceBundle.getBundle("interactive.resources.BoardHandling", p_locale);
@@ -1520,6 +1520,7 @@ public class BoardHandling
         {
             return;
         }
+        has_autorouted = false;
         board.generate_snapshot();
         this.interactive_action_thread = InteractiveActionThread.get_batch_autorouter_instance(this);
         this.interactive_action_thread.start();
@@ -1804,7 +1805,7 @@ public class BoardHandling
     /** For ransforming coordinates between the user and the board coordinate space */
     public CoordinateTransform coordinate_transform = null;
     /** The text message fields displayed on the screen */
-    public final ScreenMessages screen_messages;
+    public final IScreenMessages screen_messages;
     /** The current settings for interactive actions on the board*/
     public Settings settings = null;
     /** The currently active interactive state. */
@@ -1840,4 +1841,5 @@ public class BoardHandling
     boolean paint_immediately = false;
     private final java.util.ResourceBundle resources;
     private final java.util.Locale locale;
+    public boolean has_autorouted = false;
 }
