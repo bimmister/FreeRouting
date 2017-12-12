@@ -20,6 +20,7 @@ public class MainApplication {
     {
 		String design_file_name = "";
 		String output_file_name = "";
+		int timeout = 60;
 		
 		for (int i = 0; i < p_args.length; ++i)
         {
@@ -35,6 +36,14 @@ public class MainApplication {
             	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
             	{
             		output_file_name = p_args[i+1];
+            	}
+            }
+            else if (p_args[i].startsWith("-t"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_timeout = p_args[i+1];
+            		timeout = Integer.parseInt(s_timeout);
             	}
             }
         }
@@ -75,10 +84,15 @@ public class MainApplication {
 		bh.start_batch_autorouter();
 		
 		try {
+			int cycles = 0; 
 			do
 			{
-				TimeUnit.MILLISECONDS.sleep(100);
-				System.out.print("x");
+				TimeUnit.MILLISECONDS.sleep(500);
+				cycles++;
+				if ((cycles / 2) > timeout)
+				{
+					ErrorOut("Autorouting time out!", 3);
+				}
 			}
 			while(!bh.has_autorouted);
 		} catch (InterruptedException e) {
