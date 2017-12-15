@@ -29,7 +29,7 @@ public class MainApplication {
 		 * -de, design file (dsn)
 		 * -o, output file (ses)
 		 * -od, output file (dsn)
-		 * -t, autorouter timeout in seconds. Default 60
+		 * -t, autoroutcer timeout in seconds. Default 60
 		 * -l, comma separated list of layers to route. Mandatory if referenced later
 		 * -ld, preferred directions of layers. Same order as in -l. v for vertical, h for horizontal
 		 * -v, Vias allowed? y/n, default y.
@@ -51,32 +51,42 @@ public class MainApplication {
 		List<String> layers_to_route = new ArrayList<String>();
 		Map<String, String> layer_directions = new HashMap<String, String>();
 		Map<String, Integer> layer_ids = new HashMap<String, Integer>();
+		Map<String, Double> layer_pref_dir_cost = new HashMap<String, Double>();
+		Map<String, Double> against_layer_pref_dir_cost = new HashMap<String, Double>();
 		int timeout = 60;
+		boolean vias_allowed = true;
+		boolean do_fanout = false;
+		boolean do_autorouting = true;
+		boolean do_postrouting = true;
+		int via_cost = 50;
+		int ppvia_cost = 5;
+		int start_pass = 91;
+		int ripup_start_cost = 100;
 		
 		for (int i = 0; i < p_args.length; ++i)
         {
-            if (p_args[i].startsWith("-de"))
+            if (p_args[i].equals("-de"))
             {
                 if (p_args.length > i + 1 && !p_args[i + 1].startsWith("-"))
                 {
                     design_file_name = p_args[i + 1];
                 }
             }
-            else if (p_args[i].startsWith("-od"))
+            else if (p_args[i].equals("-od"))
             {
             	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
             	{
             		output_file_name_dsn = p_args[i+1];
             	}
             }
-            else if (p_args[i].startsWith("-o"))
+            else if (p_args[i].equals("-o"))
             {
             	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
             	{
             		output_file_name = p_args[i+1];
             	}
             }
-            else if (p_args[i].startsWith("-t"))
+            else if (p_args[i].equals("-t"))
             {
             	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
             	{
@@ -84,7 +94,7 @@ public class MainApplication {
             		timeout = Integer.parseInt(s_timeout);
             	}
             }
-            else if (p_args[i].startsWith("-ld"))
+            else if (p_args[i].equals("-ld"))
             {
             	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
             	{
@@ -96,13 +106,101 @@ public class MainApplication {
             		}
             	}
             }
-            else if (p_args[i].startsWith("-l"))
+            else if (p_args[i].equals("-l"))
             {
             	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
             	{
             		String s_layers = p_args[i+1];
             		String[] a_layers = s_layers.split(",");
             		layers_to_route.addAll(Arrays.asList(a_layers));
+            	}
+            }
+            else if (p_args[i].equals("-v"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_vias = p_args[i+1];
+            		vias_allowed = !s_vias.equals("n");
+            	}
+            }
+            else if (p_args[i].equals("-fo"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_fanout = p_args[i+1];
+            		do_fanout = s_fanout.equals("y");
+            	}
+            }
+            else if (p_args[i].equals("-ar"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_autoroute = p_args[i+1];
+            		do_autorouting = !s_autoroute.equals("n");
+            	}
+            }
+            else if (p_args[i].equals("-pr"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_postroute = p_args[i+1];
+            		do_postrouting = !s_postroute.equals("n");
+            	}
+            }
+            else if (p_args[i].equals("-vc"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_viacost = p_args[i+1];
+            		via_cost = Integer.parseInt(s_viacost);
+            	}
+            }
+            else if (p_args[i].equals("-ppvc"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_ppviacost = p_args[i+1];
+            		ppvia_cost = Integer.parseInt(s_ppviacost);
+            	}
+            }
+            else if (p_args[i].equals("-sp"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_startpass = p_args[i+1];
+            		start_pass = Integer.parseInt(s_startpass);
+            	}
+            }
+            else if (p_args[i].equals("-rsc"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_ripupstartcost = p_args[i+1];
+            		ripup_start_cost = Integer.parseInt(s_ripupstartcost);
+            	}
+            }
+            else if (p_args[i].equals("-pdc"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_pref_dir = p_args[i+1];
+            		String[] a_pref_dir = s_pref_dir.split(",");
+            		for (int j = 0; j < a_pref_dir.length; j++)
+            		{
+            			layer_pref_dir_cost.put(layers_to_route.get(j), Double.parseDouble(a_pref_dir[j]));
+            		}
+            	}
+            }
+            else if (p_args[i].equals("-apdc"))
+            {
+            	if (p_args.length > i+1 && !p_args[i+1].startsWith("-"))
+            	{
+            		String s_against_pref_dir = p_args[i+1];
+            		String[] a_against_pref_dir = s_against_pref_dir.split(",");
+            		for (int j = 0; j < a_against_pref_dir.length; j++)
+            		{
+            			against_layer_pref_dir_cost.put(layers_to_route.get(j), Double.parseDouble(a_against_pref_dir[j]));
+            		}
             	}
             }
         }
@@ -155,6 +253,14 @@ public class MainApplication {
 				{
 					bh.settings.autoroute_settings.set_preferred_direction_is_horizontal(curr_layer_no, layer_directions.get(l.name).equals("h"));
 				}
+				if (layer_pref_dir_cost.containsKey(l.name))
+				{
+					bh.settings.autoroute_settings.set_preferred_direction_trace_costs(curr_layer_no, layer_pref_dir_cost.get(l.name));
+				}
+				if (against_layer_pref_dir_cost.containsKey(l.name))
+				{
+					bh.settings.autoroute_settings.set_against_preferred_direction_trace_costs(curr_layer_no, against_layer_pref_dir_cost.get(l.name));
+				}
 			}
 			else
 			{
@@ -162,6 +268,15 @@ public class MainApplication {
 			}
 		}
 		
+		//Set global autorouter settings
+		bh.settings.autoroute_settings.set_vias_allowed(vias_allowed);
+		bh.settings.autoroute_settings.set_with_fanout(do_fanout);
+		bh.settings.autoroute_settings.set_with_autoroute(do_autorouting);
+		bh.settings.autoroute_settings.set_with_postroute(do_postrouting);
+		bh.settings.autoroute_settings.set_via_costs(via_cost);
+		bh.settings.autoroute_settings.set_plane_via_costs(ppvia_cost);
+		bh.settings.autoroute_settings.set_pass_no(start_pass);
+		bh.settings.autoroute_settings.set_start_ripup_costs(ripup_start_cost);
 		
 		//Do the routing
 		bh.start_batch_autorouter();
