@@ -19,11 +19,21 @@ Parameters
 ----------
 The following parameters can be supplied to the program:
 
-Name | Optional | Description | Example | Default
----- | -------- | ----------- | ------- | -------
--de | **mandatory** | Specifies the location of the input file | -de "~/design.des" | N/A
--o | **mandatory** | Specifies the location for the output file | -o "~/design_routed.ses" | N/A
--od | **optional** | Specifies the location for the .des output file | -o "~/design_routed.des" | N/A
--t | **optional** | Sets a timeout value for the autorouter, in seconds | -t 45 | 60
--l | **semi-optional** | Lists all the layers which should be actively routed. Mandatory if other parameters referencing layers are specified. Should list the parameters as comma-seperated layer names. | -l F.Cu,B.Cu | All layers
--ld | **optional** | A list of preferred directions for traces by layer. Same order as in -l, which is required. h for horizontal, v for vertical. | -ld h,v | Automatic
+Name | Optional | Description | Allowed values | Example | Default
+---- | -------- | ----------- | -------------- | ------- | -------
+-de | **mandatory** | Specifies the location of the input file | Any file with a .des ending | -de "~/design.des" | N/A
+-o | **mandatory** | Specifies the location for the output file | Any file path with a .ses ending | -o "~/design_routed.ses" | N/A
+-od | **optional** | Specifies the location for the .des output file | Any file path with a .des ending | -o "~/design_routed.des" | N/A
+-t | **optional** | Sets a timeout value for the autorouter, in seconds | Any positive integer number | -t 45 | 60
+-l | **semi-optional** | Lists all the layers which should be actively routed. Mandatory if other parameters referencing layers are specified. Should list the parameters as comma-seperated layer names. | A list of strings with , as a separator | -l F.Cu,B.Cu | All layers
+-ld | **optional** | A list of preferred directions for traces by layer. Same order as in -l, which is required. h for horizontal, v for vertical. | a list of h and v with , as a separator | -ld h,v | Automatic
+-v | **optional** | Specifies whether the autorouter is allowed to create vias. | y or n | -v y | y
+-fo | **optional** | Specifies whether the autorouter should start with a fanout step. | y or n | -fo y | n
+-ar | **optional** | Specifies whether the autorouter should include an autorouting step. | y or n | -ar y | y
+-pr | **optional** | Specifies whether the autorouter should include a post-routing optimization step. | y or n | -pr y | y
+-vc | **optional** | The cost value of creating a via hole while autorouting | positive integer values | -vc 35 | 50
+-ppvc | **optional** | The cost value of creating a powerplane via hole while autorouting | positive integer values | -ppvc 20 | 5
+-sp | **optional** | The start pass value | integer values 1-99 | -sp 1 | Automatically selected
+-rsc | **optional** | The startcost of a ripup for the autorouter | -rsc | 100
+-pdc | **optional** | The preferred direction trace cost, by layer | float values separated by , and with . as a decimal point | -pdc 1.2,1.3
+-apdc | **optional** | The trace cost against the preferred direction, by layer | float value separated by , and with . as a decimal point | 5.5,5.7
