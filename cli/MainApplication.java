@@ -301,18 +301,24 @@ public class MainApplication {
 		//Write the results to the output file
 		try
 		{
-			File output_file = new File(output_file_name);
-			File output_file_dsn = new File(output_file_name_dsn);
-			java.io.OutputStream output_stream = new FileOutputStream(output_file);
-			java.io.OutputStream dsn_output_stream = new FileOutputStream(output_file_dsn);
-			if (!output_file.exists())
-				output_file.createNewFile();
-			if (!output_file_dsn.exists())
-				output_file_dsn.createNewFile();
-			bh.export_specctra_session_file("FreeRouted", output_stream);
-			bh.export_to_dsn_file(dsn_output_stream, "test", false);
-			output_stream.close();
-			dsn_output_stream.close();
+			if (!output_file_name.isEmpty())
+			{
+				File output_file = new File(output_file_name);
+				java.io.OutputStream output_stream = new FileOutputStream(output_file);
+				if (!output_file.exists())
+					output_file.createNewFile();
+				bh.export_specctra_session_file("FreeRouted", output_stream);
+				output_stream.close();
+			}
+			if (!output_file_name_dsn.isEmpty())
+			{
+				File output_file_dsn = new File(output_file_name_dsn);
+				java.io.OutputStream dsn_output_stream = new FileOutputStream(output_file_dsn);
+				if (!output_file_dsn.exists())
+					output_file_dsn.createNewFile();
+				bh.export_to_dsn_file(dsn_output_stream, "test", false);
+				dsn_output_stream.close();
+			}
 		}
 		catch (Exception e)
 		{
