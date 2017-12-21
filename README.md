@@ -24,7 +24,7 @@ Name | Optional | Description | Allowed values | Example | Default
 -de | **mandatory** | Specifies the location of the input file | Any file with a .dsn ending | -de "~/design.dsn" | N/A
 -o | **mandatory** | Specifies the location for the output file | Any file path with a .ses ending | -o "~/design_routed.ses" | N/A
 -od | **optional** | Specifies the location for the .dsn output file | Any file path with a .dsn ending | -o "~/design_routed.dsn" | N/A
--t | **optional** | Sets a timeout value for the autorouter, in seconds | Any positive integer number | -t 45 | 60
+-t | **optional** | Sets a timeout value for the autorouter, in seconds. 0 for no timeout. | Any >= 0 integer number | -t 45 | 60
 -l | **semi-optional** | Lists all the layers which should be actively routed. Mandatory if other parameters referencing layers are specified. Should list the parameters as comma-seperated layer names. | A list of strings with , as a separator | -l F.Cu,B.Cu | All layers
 -ld | **optional** | A list of preferred directions for traces by layer. Same order as in -l, which is required. h for horizontal, v for vertical. | a list of h and v with , as a separator | -ld h,v | Automatic
 -v | **optional** | Specifies whether the autorouter is allowed to create vias. | y or n | -v y | y
