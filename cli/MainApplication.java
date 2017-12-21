@@ -49,6 +49,7 @@ public class MainApplication {
 		 * 3, File read/write errors
 		 * 4, Design errors
 		 * 5, Timeout
+		 * 6, Interrupted
 		 */
 		
 		try
@@ -401,7 +402,7 @@ public class MainApplication {
 					while(!bh.has_autorouted);
 				}
 			} catch (InterruptedException ex) {
-				ErrorOut("Interrupted..!", 0, ex);
+				ErrorOut("Interrupted..!", 6, ex);
 			}
 			
 			//Write the results to the output file
