@@ -37,3 +37,16 @@ Name | Optional | Description | Allowed values | Example | Default
 -rsc | **optional** | The startcost of a ripup for the autorouter | -rsc | 100
 -pdc | **optional** | The preferred direction trace cost, by layer | float values separated by , and with . as a decimal point | -pdc 1.2,1.3
 -apdc | **optional** | The trace cost against the preferred direction, by layer | float value separated by , and with . as a decimal point | 5.5,5.7
+
+Error codes
+-----------
+The following error codes can be returned, along with a (hopefully) helpful message in case of errors:
+
+Code | Description
+---- | -----------
+1 | Unknown error
+2 | Invalid input parameter
+3 | I/O error with reading or writing files
+4 | Design problems
+5 | Timeout
+6 | Routing interrupted
