@@ -190,7 +190,7 @@ public class MainApplication {
 			
 			if (arguments.containsKey("-pr"))
 			{
-				String s_postroute = arguments.get("-ar").toLowerCase();
+				String s_postroute = arguments.get("-pr").toLowerCase();
 				if (!(s_postroute.equals("y") || s_postroute.equals("n")))
 				{
 					ErrorOut("Do postrouting can only be specified as 'y' or 'n' at -pr", 2);
